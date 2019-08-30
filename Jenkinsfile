@@ -31,7 +31,14 @@ pipeline {
 
       stage('Deploy to Cluster') {
           steps {
-                    sh 'envsubst < ${WORKSPACE}/deploy.yaml | kubectl apply -f -'
+                    //sh 'envsubst < ${WORKSPACE}/deploy.yaml | kubectl apply -f -'
+             
+             script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                        app.push("${REPOSITORY_TAG}")
+                        //app.push("latest")
+                    }
+                
           }
       }
    }
