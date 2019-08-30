@@ -1,46 +1,39 @@
 pipeline {
-   agent any
-
-   environment {
-     // You must set the following environment variables
-     // ORGANIZATION_NAME
-     // YOUR_DOCKERHUB_USERNAME (it doesn't matter if you don't have one)
-
-     SERVICE_NAME = "fleetman-api-gateway"
-     REPOSITORY_TAG="${YOUR_DOCKERHUB_USERNAME}/${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
+    agent any
+    environment {
+        YOUR_DOCKERHUB_USERNAME="abbi1680"
+        ORGANIZATION_NAME="my-k8s-lab-organisation"
+        SERVICE_NAME = "fleetman-api-gateway"
+        REPOSITORY_TAG="${YOUR_DOCKERHUB_USERNAME}/${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
    }
+    }
+    stages {
 
-   stages {
-      stage('Preparation') {
+        stage('Preparation') {
          steps {
             cleanWs()
             git credentialsId: 'GitHub', url: "https://github.com/${ORGANIZATION_NAME}/${SERVICE_NAME}"
          }
-      }
-      stage('Build') {
+        }
+
+        stage('Build') {
          steps {
             sh '''mvn clean package'''
          }
-      }
-
-      stage('Build Docker Image') {
+        }
+      
+        stage('Build Docker Image') {
+           
             steps {
                 script {
-                    app = docker.build(${REPOSITORY_TAG} )
-                    
+                    app = docker.build(REPOSITORY_TAG)
+                    app.inside {
+                        sh 'echo Hello, World!'
+                    }
                 }
             }
-      }
+        }
+       
         
-       stage('Push Docker Image') {
-            steps {
-                  docker.withRegistry("https://registry.hub.docker.com", docker_hub_login) {
-                  app.push()
-                  app.push("latest")
-                }
-      
-            }
-      
-    
-   }
+    }
 }
