@@ -24,25 +24,22 @@ pipeline {
       }
 
       stage('Build Docker Image') {
-         steps {
-           sh 'docker image build -t ${REPOSITORY_TAG} .'
-         }
-      }
-      
-      
-      
-      stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
-                        app.push(${REPOSITORY_TAG})
-                        app.push("latest")
-                    }
+                    app = docker.build(${REPOSITORY_TAG} )
+                    
                 }
             }
       }
+        
+       stage('Push Docker Image') {
+            steps {
+                  docker.withRegistry("https://registry.hub.docker.com", docker_hub_login) {
+                  app.push()
+                  app.push("latest")
+                }
       
-      
+            }
       
     
    }
