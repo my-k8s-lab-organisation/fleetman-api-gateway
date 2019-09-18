@@ -22,5 +22,36 @@ pipeline {
                     }
         }
         
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    app = docker.build(REPOSITORY_TAG)
+                    app.inside {
+                        sh 'echo Docker image is built'
+                    }
+                }
+            }
+        }
+        
+        
+      
+        
+        stage('Push Docker Image to docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
+
+                    }
+                }
+            }
+        }
+        
+        
+        
+        
+        
     }
 }
