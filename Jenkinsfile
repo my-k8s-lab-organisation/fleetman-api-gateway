@@ -14,13 +14,20 @@ pipeline {
             sh 'mvn clean package'
          }
         }
-      
+   
+        
         stage('Build Docker Image') {
-           
             steps {
-                   sh 'docker image build -t ${REPOSITORY_TAG} .'
+                script {
+                    app = docker.build(${REPOSITORY_TAG})
+                    app.inside {
+                        sh 'echo Docker image is built'
                     }
+                }
+            }
         }
+        
+        
         
         
         
@@ -28,8 +35,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
-                      sh 'docker push ${REPOSITORY_TAG}'
-
+                        app.push("${REPOSITORY_TAG}")
+                        app.push("latest")
                         
                     }
                 }
