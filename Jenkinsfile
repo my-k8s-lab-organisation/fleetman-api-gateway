@@ -23,15 +23,18 @@ pipeline {
         }
         
         
-         stage('Push Docker Image') {
-        script {
-        steps {
-          docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
-          sh 'docker push abbi1680/${REPOSITORY_TAG}'
+        
+        stage('Push Docker Image to docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                      sh 'docker push abbi1680/${REPOSITORY_TAG}'
+
+                        
+                    }
+                }
+            }
         }
-        }
-        }
-         }
         
         
         
