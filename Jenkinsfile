@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
-                      sh 'docker push abbi1680/${REPOSITORY_TAG}'
+                      sh 'docker push ${REPOSITORY_TAG}'
 
                         
                     }
