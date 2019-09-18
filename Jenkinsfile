@@ -23,31 +23,15 @@ pipeline {
         }
         
         
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    app = docker.build(REPOSITORY_TAG)
-                    app.inside {
-                        sh 'echo Docker image is built'
-                    }
-                }
-            }
+         stage('Push Docker Image') {
+        
+        steps {
+          docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+          sh 'docker push abbi1680/${REPOSITORY_TAG}'
+        }
         }
         
-        
-      
-        
-        stage('Push Docker Image to docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
-                        app.push("${env.BUILD_NUMBER}")
-                        app.push("latest")
-
-                    }
-                }
-            }
-        }
+         }
         
         
         
