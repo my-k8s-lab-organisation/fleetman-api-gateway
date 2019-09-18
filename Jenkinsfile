@@ -19,7 +19,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    app = docker.build(${REPOSITORY_TAG})
+                    app = docker.build("${REPOSITORY_TAG}")
                     app.inside {
                         sh 'echo Docker image is built'
                     }
